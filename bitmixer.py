@@ -35,8 +35,8 @@ def addresses_are_valid(addresses):
     return True
 
 
-@celery.task
-def start_background_mixing_task(addresses, deposit_address):
+@celery.task(name='bitmixer.start_background_mixing')
+def start_background_mixing(addresses, deposit_address):
     while address_is_valid(deposit_address):
         print 'JobCoins not yet deposited.'
         time.sleep(20)
@@ -59,7 +59,7 @@ def index():
             addresses = request.form['addresses'].split()
             if addresses_are_valid(addresses):
                 deposit_address = generate_deposit_address()
-                start_background_mixing_task(addresses, deposit_address)
+                start_background_mixing.apply_async((addresses, deposit_address))
                 return render_template('deposit.html', deposit_address=deposit_address)
             else:
                 error = 'At least one of the supplied addresses was not new and unused.'
