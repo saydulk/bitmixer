@@ -8,6 +8,7 @@ from celery import Celery
 import requests
 
 JOBCOIN_BASE_API = 'http://jobcoin.projecticeland.net/anopsia/api/'
+RESERVE_CHAIN_ADDRESS = 'BitMixerReserveChain'
 
 app = Flask(__name__)
 app.config['CELERY_BROKER_URL'] = os.environ['REDIS_URL']
@@ -18,8 +19,7 @@ celery.conf.update(app.config)
 
 def address_is_valid(address):
     url = JOBCOIN_BASE_API + 'addresses/' + address
-    response = requests.get(url)
-    json_response = response.json()
+    json_response = get_address_info(url)
     balance = float(json_response['balance'])
     number_of_transactions = len(json_response['transactions'])
     if (balance != 0) or (number_of_transactions != 0):
@@ -35,12 +35,44 @@ def addresses_are_valid(addresses):
     return True
 
 
-@celery.task(name='bitmixer.start_background_mixing')
-def start_background_mixing(addresses, deposit_address):
+def get_address_info(url):
+    response = requests.get(url)
+    json_response = response.json()
+    return json_response
+
+
+def make_transaction(from_address, to_address, amount):
+    transaction_url = JOBCOIN_BASE_API + 'transactions'
+    post_data = {
+        'fromAddress': from_address,
+        'toAddress': to_address,
+        'amount': str(amount)
+    }
+    requests.post(transaction_url, data=post_data)
+
+
+def mix(addresses, balance):
+    print balance
+    for address in addresses[:-1]:
+        amount = 0
+        if balance > 0:
+            amount = balance - random.SystemRandom().uniform(0, balance)
+            balance = balance - amount
+        print balance
+        make_transaction(RESERVE_CHAIN_ADDRESS, address, amount)
+    make_transaction(RESERVE_CHAIN_ADDRESS, addresses[-1], balance)
+    print balance
+
+
+@celery.task(name='bitmixer.mix_in_background')
+def mix_in_background(addresses, deposit_address):
     while address_is_valid(deposit_address):
-        print 'JobCoins not yet deposited.'
         time.sleep(20)
-    print 'JobCoins deposited.'
+    url = JOBCOIN_BASE_API + 'addresses/' + deposit_address
+    json_response = get_address_info(url)
+    balance = float(json_response['balance'])
+    make_transaction(deposit_address, RESERVE_CHAIN_ADDRESS, balance)
+    mix(addresses, balance)
 
 
 def generate_deposit_address():
@@ -59,7 +91,7 @@ def index():
             addresses = request.form['addresses'].split()
             if addresses_are_valid(addresses):
                 deposit_address = generate_deposit_address()
-                start_background_mixing.apply_async((addresses, deposit_address))
+                mix_in_background.apply_async((addresses, deposit_address))
                 return render_template('deposit.html', deposit_address=deposit_address)
             else:
                 error = 'At least one of the supplied addresses was not new and unused.'
