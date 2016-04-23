@@ -1,4 +1,6 @@
 import os
+import random
+import string
 
 from flask import Flask, render_template, request
 from celery import Celery
@@ -37,7 +39,8 @@ def start_background_mixing_task(addresses, deposit_address):
 
 
 def generate_deposit_address():
-    return 'Test'
+    symbols = string.ascii_lowercase + string.digits
+    return ''.join(random.choice(symbols) for _ in range(16))
 
 
 @app.route('/', methods=['GET', 'POST'])
