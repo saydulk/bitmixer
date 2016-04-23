@@ -1,0 +1,1 @@
+web: gunicorn bitmixer:app --log-file -
