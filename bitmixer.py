@@ -32,6 +32,14 @@ def addresses_are_valid(addresses):
     return True
 
 
+def start_background_mixing_task(addresses, deposit_address):
+    pass
+
+
+def generate_deposit_address():
+    return 'Test'
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     error = None
@@ -39,8 +47,9 @@ def index():
         if request.form['addresses']:
             addresses = request.form['addresses'].split()
             if addresses_are_valid(addresses):
-                #redirect
-                pass
+                deposit_address = generate_deposit_address()
+                start_background_mixing_task(addresses, deposit_address)
+                return render_template('deposit.html', deposit_address=deposit_address)
             else:
                 error = 'At least one of the supplied addresses was not new and unused.'
         else:
