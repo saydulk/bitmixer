@@ -38,6 +38,7 @@ def addresses_are_valid(addresses):
 @celery.task
 def start_background_mixing_task(addresses, deposit_address):
     while address_is_valid(deposit_address):
+        print 'JobCoins not yet deposited.'
         time.sleep(20)
     print 'JobCoins deposited.'
 
