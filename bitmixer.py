@@ -40,7 +40,10 @@ def start_background_mixing_task(addresses, deposit_address):
 
 def generate_deposit_address():
     symbols = string.ascii_uppercase + string.ascii_lowercase + string.digits
-    return ''.join(random.SystemRandom().choice(symbols) for _ in range(16))
+    generated_address = ''.join(random.SystemRandom().choice(symbols) for _ in range(16))
+    while not address_is_valid(generated_address):
+        generated_address = ''.join(random.SystemRandom().choice(symbols) for _ in range(16))
+    return generated_address
 
 
 @app.route('/', methods=['GET', 'POST'])
