@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <p>To start mixing, enter a list (one per line) of new and unused JobCoin addresses below and submit.</p>
+        </div>
+        <form action="" method="post">
+            <textarea class="u-full-width" placeholder="address1&#13;&#10;..." name="addresses"></textarea>
+            <input class="button-primary" type="submit" value="Submit">
+        </form>
+        {% if error %}
+            <p class=error><strong>Error:</strong> {{ error }}
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>BitMixer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='skeleton.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='normalize.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="header u-full-width">
+            <h3>BitMixer</h3>
+        </div>
+    </div>
+</div>
+<br>
+<div id="content">{% block content %}{% endblock %}</div>
+</body>
+</html>
