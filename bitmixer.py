@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, render_template, request
 from celery import Celery
 import requests
@@ -5,6 +7,10 @@ import requests
 JOBCOIN_BASE_API = 'http://jobcoin.projecticeland.net/anopsia/api/'
 
 app = Flask(__name__)
+app.config['CELERY_BROKER_URL'] = os.environ['REDIS_URL']
+app.config['CELERY_RESULT_BACKEND'] = os.environ['REDIS_URL']
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
 
 
 def address_is_valid(address):

@@ -8,5 +8,6 @@ Jinja2==2.8
 kombu==3.0.35
 MarkupSafe==0.23
 pytz==2016.4
+redis==2.10.5
 requests==2.9.1
 Werkzeug==0.11.8
