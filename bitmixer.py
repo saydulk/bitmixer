@@ -27,7 +27,8 @@ def index():
             addresses = request.form['addresses'].split()
             if addresses_are_valid(addresses):
                 deposit_address = generate_valid_address()
-                mix_in_background.apply_async((addresses, deposit_address))
+                # Give the user 1 hour to deposit the JobCoins
+                mix_in_background.apply_async((addresses, deposit_address), expires=3600)
                 return render_template('deposit.html', deposit_address=deposit_address)
             else:
                 error = 'At least one of the supplied addresses was not new and unused.'
@@ -118,5 +119,4 @@ def mix(addresses, total_amount):
 
 
 if __name__ == '__main__':
-    app.debug = True
     app.run()
