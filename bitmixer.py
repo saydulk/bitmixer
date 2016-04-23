@@ -2,6 +2,7 @@ import os
 import random
 import string
 
+import time
 from flask import Flask, render_template, request
 from celery import Celery
 import requests
@@ -34,8 +35,11 @@ def addresses_are_valid(addresses):
     return True
 
 
+@celery.task
 def start_background_mixing_task(addresses, deposit_address):
-    pass
+    while address_is_valid(deposit_address):
+        time.sleep(20)
+    print 'JobCoins deposited.'
 
 
 def generate_deposit_address():
