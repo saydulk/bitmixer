@@ -1,2 +1,2 @@
 web: gunicorn bitmixer:app --log-file -
-worker: celery worker --app=tasks.app
+worker: celery worker --app=bitmixer.celery
