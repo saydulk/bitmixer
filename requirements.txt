@@ -5,7 +5,7 @@ celery==3.1.23
 Flask==0.10.1
 gunicorn==19.4.5
 itsdangerous==0.24
-Jinja2==2.8
+Jinja2==2.11.3
 kombu==3.0.35
 MarkupSafe==0.23
 pytz==2016.4
